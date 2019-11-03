@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>jQuery</title>
+    <script src="/libs/jquery.js"></script>
+</head>
+
+<body>
+    <input type="text" name="text" id="text">
+    <button id="evt">click me!</button>
+
+    <div style="display: inline table;">
+        <tr>
+            <td>d</td>
+            <td>book</td>
+        </tr>
+        <tr>
+            <td>###</td>
+            <td>111</td>
+        </tr>
+    </div>
+
+    <div id="host"></div>
+    <script>
+        // jquery init
+        // const btn = $('#evt')
+        // const btn2 = $('<button>btn 2</button>')
+        // console.log(btn)
+
+        const $a = $('body')
+        event();
+
+
+        // jquery event
+        function event() {
+            // $a.one('click', 'button' ,()=>{
+            //     console.log( 'boo.foo is triggered!' )
+            // })
+            // $('button').trigger('click' )
+
+            const txt = $('input')
+
+            // txt.on('focus', function(...args){
+            //     console.log(this);
+            //     console.log(args)
+            // })
+
+            $a.on('load', 'img', function () {
+                console.log('img loaded!!!')
+            })
+
+            const img = new Image()
+            document.body.appendChild(img)
+            img.src = 'imgs/img.png'
+
+            $('img').on('load', function () {
+                console.log('image self on load!!!')
+            })
+
+            $a.on('load', 'img', function () {
+                console.log('img loaded!!!')
+            })
+        }
+
+
+
+        // deferred
+        function deferred() {
+            const dtd = $.Deferred(function (promise, ...args) {
+                console.log('1')
+                console.log(args)
+                setTimeout(() => {
+                    promise.resolve('good')
+                }, 1000)
+
+            })
+            dtd.resolve('bad').then(d => {
+                console.log(2)
+                console.log(d)
+            })
+
+
+        }
+
+
+
+        function shadow() {
+            // shadowRoot
+            const elem = document.querySelector('#host');
+            const shadowRoot = elem.attachShadow({ mode: 'open' });
+            const p = document.createElement('p');
+            shadowRoot.appendChild(p);
+            p.textContent = 'Hello shadow elem!';
+        }
+
+
+
+        // css
+        function css() {
+
+            $a.width('1000px')
+            const $h = $('<h1></h1>').text('book red color').css({ 'width': '1000px', 'max-width': '500px' })
+            console.log($h.css('width'))
+            $('body').append($h)
+            console.log($h.css('width'))
+        }
+
+        $.ajax({
+            url: '/api/test',
+            type: 'get',
+            data: {
+                name: 'foo'
+            },
+            success: function (data) {
+                console.log(data);
+            }
+        });
+
+
+    </script>
+</body>
+
+</html>
