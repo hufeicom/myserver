@@ -7,13 +7,22 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>jQuery</title>
     <script src="/libs/jquery.js"></script>
+    <script src="/libs/myspecial.js"></script>
+
+    <style>
+        .fade{
+            background: purple;
+            width: 200px;
+            height: 120px;
+        }
+    </style>
 </head>
 
 <body>
     <input type="text" name="text" id="text">
     <button id="evt">click me!</button>
 
-    <div style="display: inline table;">
+    <div style="display:table;" class="first">
         <tr>
             <td>d</td>
             <td>book</td>
@@ -24,7 +33,9 @@
         </tr>
     </div>
 
-    <div id="host"></div>
+    <div id="host" class="event" width="100px" color="red"> host div  <div> sdflj asdlfkj</div> <div>sdfas  </div> <ul> <li>21q3e13</li></ul></div>
+
+    <div class="fade"></div>
     <script>
         // jquery init
         // const btn = $('#evt')
@@ -32,7 +43,33 @@
         // console.log(btn)
 
         const $a = $('body')
-        event();
+
+        $a.on('dblclick', function(){
+            console.log('dblclick')
+        })
+        $('div').on('dblclick', function(){
+            console.log('dblclick 2')
+        })
+
+        $('.event').on('click', function(e){
+            $(this).css({
+                background: 'blue'
+            })
+        })
+
+        $('.event').on('clickoutside', function(e){
+            $(this).css({
+                background: 'red'
+            })
+        })
+
+        $('.event').on('clickoutside', handler)
+        $('body').on('clickoutside', handler)
+        function handler(){
+            console.log('first clickoutside', this)
+        }
+        $('.event').off('clickoutside', handler)
+        // event();
 
 
         // jquery event
@@ -42,47 +79,73 @@
             // })
             // $('button').trigger('click' )
 
-            const txt = $('input')
+            const txt = window.$i = $('input')
+            txt.on('click', function(){
+                console.log('click aaa')
+            })
+           
+            // txt.on('clickoutside', (...args)=>{
+            //     console.log('clickoutside')
+            // })
+            // $('body').on('clickoutside', ()=>{
+            //     console.log('body clickoutside')
+            // })
+            //  txt.trigger('clickoutside')
+            // txt.off('myfocusin')
+            // const $td = $('button');
+            // $td.on('click', function(){
+            //     console.log( 'button click !')
+            // })
+
+            // txt.on('focus', e => {
+            //     console.log(e.target)
+            // })
 
             // txt.on('focus', function(...args){
             //     console.log(this);
             //     console.log(args)
             // })
 
-            $a.on('load', 'img', function () {
-                console.log('img loaded!!!')
-            })
+            // $a.on('load', 'img', function () {
+            //     console.log('img loaded!!!')
+            // })
 
-            const img = new Image()
-            document.body.appendChild(img)
-            img.src = 'imgs/img.png'
+            // const img = new Image()
+            // document.body.appendChild(img)
+            // img.src = 'imgs/img.png'
 
-            $('img').on('load', function () {
-                console.log('image self on load!!!')
-            })
+            // $('img').on('load', function () {
+            //     console.log('image self on load!!!')
+            // })
 
-            $a.on('load', 'img', function () {
-                console.log('img loaded!!!')
-            })
+            // $a.on('load', 'img', function () {
+            //     console.log('img loaded!!!')
+            // })
         }
 
 
 
         // deferred
+        // deferred();
         function deferred() {
-            const dtd = $.Deferred(function (promise, ...args) {
+            const dtd = $.Deferred(function (promise) {
                 console.log('1')
-                console.log(args)
-                setTimeout(() => {
+                setTimeout(function() {
                     promise.resolve('good')
                 }, 1000)
 
             })
-            dtd.resolve('bad').then(d => {
+            dtd.resolve('bad').then(function(d) {
                 console.log(2)
                 console.log(d)
             })
 
+            const p = $.Deferred().promise(function(){
+                console.log('test 1');
+                this.resolve('test promise resolve')
+            }).then(function(m){
+                console.log(m)
+            })
 
         }
 
@@ -109,16 +172,24 @@
             console.log($h.css('width'))
         }
 
-        $.ajax({
-            url: '/api/test',
-            type: 'get',
-            data: {
-                name: 'foo'
-            },
-            success: function (data) {
-                console.log(data);
-            }
-        });
+        function ajax() {
+            $.ajax({
+                url: '/api/test',
+                type: 'get',
+                data: {
+                    name: 'foo'
+                },
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+
+
+        // animation();
+        function animation(){
+            $('.fade').fadeOut()
+        }
 
 
     </script>
