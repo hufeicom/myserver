@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>jQuery click</title>
+
+    <style>
+        div {
+            border: 1px solid sienna;
+        }
+    </style>
+    <script src="../libs/jquery.js"></script>
+    
+    <style>
+        #logBox{
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <p id="useragent"></p>
+    <button id="btn1" name="btn one"> btn1</button>
+    <button id="btn2" name="btn two"> btn2</button>
+    <input type="checkbox" name="checkbox1" id="chk1"> chk1
+    <input type="checkbox" name="checkbox2" id="chk2"> chk2
+    
+    <br>
+    <button id="clear">clear log</button>
+    <div id="logBox"></div>
+
+    <script>
+        /* [ ] 统一PC和移动端的事件 */
+        /* TOOD trigger方法 */
+        let lock = false;
+        ;(function($){
+            let startTime,isMove=false;
+            const THROLD_HOLD = 1000;
+            const isMobile = /(?:iphone|android)/i.test(navigator.userAgent);
+
+            const pc = {
+                setup: function(){
+                    $(this).on('click', handler)
+                },
+                teradown: function(){
+                    $(this).off('click', handler)
+                },
+                trigger: function(){
+                    console.log('myclick trigger', Date.now())
+                    if(lock === true) return;
+                    lock = true;
+                    $(this).trigger('click')
+                    lock = false;
+                    return false;
+                }
+            }
+            function handler(e){
+                console.log('click handler for trigger myclick')
+                $(this).trigger('myclick')
+            }
+            const mobile = {
+                    setup: function(){
+                        log( 'mobile [setup] is called')
+                        this.addEventListener('touchstart', touchstartHandler)
+                        this.addEventListener('touchmove', touchmoveHandler)
+                        this.addEventListener('touchend', touchendHandler)
+                    },
+                    teardown:function(){
+                        log( 'mobile [teardown] is called')
+                        this.removeEventListener('touchstart', touchstartHandler)
+                        this.removeEventListener('touchend', touchendHandler)
+                        this.removeEventListener('touchend', touchendHandler)
+                    },
+                    _default: function(){
+                        console.log('this event fired in mobile')
+                    }
+                };
+
+
+            $.event.special.myclick = isMobile ? mobile : pc;
+
+            function touchstartHandler(e){
+                startTime = Date.now()
+                isMove = false
+            }
+            function touchmoveHandler(e){
+                isMove = true
+            }
+            function touchendHandler(e){
+                if(!isMove && Date.now() - startTime < THROLD_HOLD ){
+                    $(this).trigger('myclick')
+                }
+            }
+        })(jQuery);
+    </script>
+
+    <script>
+         const useragent = document.getElementById('useragent')
+         const logBox = document.getElementById('logBox');
+
+         function init(){
+            useragent.textContent = `useragent: ${navigator.userAgent}`;
+            document.getElementById('clear').addEventListener('click', function(){
+                logBox.innerHTML = '';
+            })
+
+            $('#btn1').on('myclick', myclickHandler)
+            $('#btn1').trigger('myclick');
+            
+            $('#btn2').on('myclick', myclickHandler)
+            // $('#btn2').trigger('myclick');
+
+            $('#chk1').on('myclick', function(){
+                log(`chk1 checked: ${this.checked}`)
+            })
+
+            setTimeout(()=>{
+                $('#btn1').off('myclick')
+            }, 5000)
+            
+            function myclickHandler(){
+                log(`invoke ${this.name}'s handler`)
+            }
+         }
+
+         init()
+
+        function log(str){
+            str = Array.prototype.join.call(arguments, ' ')
+            let p = document.createElement('p');
+            p.textContent =`${getCurrentTime()}  ${str}`;
+            logBox.prepend(p);
+        }
+        function getCurrentTime(){
+            let t = new Date();
+            return `${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}:${pad(t.getMilliseconds(), 3)}`
+            function pad(n,c){
+                return (''+n).padStart(c||2, '0')
+            }
+        }
+        </script>
+
+
+</body>
+
+</html>

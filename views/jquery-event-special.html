@@ -44,21 +44,12 @@
     </div>
     <div class="l3"> </div>
     <script>
-        document.addEventListener('keyup', function (e) {
-            console.log(e)
-        })
         var $a = $('body'), $div = $('div')
         $a.on('click', function(){
             console.log( 'body click event handler')
             $(this).css({
                 background: 'blue'
             })
-        })
-        $a.on('dblclick', function () {
-            console.log('body dblclick')
-        })
-        $div.on('dblclick', function(){
-            console.log('div dblclick')
         })
 
         $div.on('click', function (e) {
@@ -68,7 +59,7 @@
             })
         })
         $div.on('clickout', clickoutHandler)
-        $a.on('clickout', clickoutHandler)
+        // $a.on('clickout', clickoutHandler)
         function clickoutHandler(e) {
             e.stopPropagation()
             $(this).css({
@@ -76,6 +67,7 @@
             })
             console.log( 'clickout', e.type, this, e.target)
         }
+        $('.l2').trigger('clickout')
 
         // $('div, body').off('clickout')
 
