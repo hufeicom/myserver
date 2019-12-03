@@ -15,6 +15,12 @@
     <script src="../libs/jquery.js"></script>
     
     <style>
+        p{
+            padding: 10px 5px;
+        }
+        button{
+            background: burlywood;
+        }
         #logBox{
             max-height: 80vh;
             overflow-y: auto;
@@ -24,115 +30,100 @@
 
 <body>
     <p id="useragent"></p>
-    <button id="btn1" name="btn one"> btn1</button>
-    <button id="btn2" name="btn two"> btn2</button>
-    <input type="checkbox" name="checkbox1" id="chk1"> chk1
-    <input type="checkbox" name="checkbox2" id="chk2"> chk2
+    <button id="addevent" name="addevent"> addEventListener</button>
+    <button id="btn2" name="special click"> jquery special click</button>
+    <input type="checkbox" name="checkbox1" id="chk1" style="display: none;">
     
     <br>
     <button id="clear">clear log</button>
     <div id="logBox"></div>
+    <pre><code for="jspecial"></code></pre>
 
-    <script>
-        /* [ ] 统一PC和移动端的事件 */
-        /* TOOD trigger方法 */
-        let lock = false;
-        ;(function($){
-            let startTime,isMove=false;
-            const THROLD_HOLD = 1000;
-            const isMobile = /(?:iphone|android)/i.test(navigator.userAgent);
-
-            const pc = {
-                setup: function(){
-                    $(this).on('click', handler)
-                },
-                teradown: function(){
-                    $(this).off('click', handler)
-                },
-                trigger: function(){
-                    console.log('myclick trigger', Date.now())
-                    if(lock === true) return;
-                    lock = true;
-                    $(this).trigger('click')
-                    lock = false;
-                    return false;
-                }
-            }
-            function handler(e){
-                console.log('click handler for trigger myclick')
-                $(this).trigger('myclick')
-            }
-            const mobile = {
-                    setup: function(){
-                        log( 'mobile [setup] is called')
-                        this.addEventListener('touchstart', touchstartHandler)
-                        this.addEventListener('touchmove', touchmoveHandler)
-                        this.addEventListener('touchend', touchendHandler)
-                    },
-                    teardown:function(){
-                        log( 'mobile [teardown] is called')
-                        this.removeEventListener('touchstart', touchstartHandler)
-                        this.removeEventListener('touchend', touchendHandler)
-                        this.removeEventListener('touchend', touchendHandler)
-                    },
-                    _default: function(){
-                        console.log('this event fired in mobile')
+<script id="jspecial">
+;(function($){
+    const isMobile = /(?:iphone|android)/i.test(navigator.userAgent);
+    const tapDelay = 200, timeout = 500;
+    const mobile = {
+            setup:function(){
+                let targetElement,startTime=0,lastClickTime=0;
+                $(this).on('touchstart touchend', function(e){
+                    if(e.type === 'touchstart'){
+                        targetElement = e.target;
+                        startTime = e.timeStamp;
+                        log(`${this.name} touchstart `)
+                    } else {
+                        if(targetElement === e.target){
+                            log(`${this.name} touchend `)
+                            if(e.timeStamp - lastClickTime < tapDelay){
+                                log( `don't need trigger click`)
+                            } else if (e.timeStamp - startTime > timeout ) {
+                                log(`click timeout`)
+                            }else {
+                                lastClickTime = e.timeStamp;
+                                this.click()
+                            }
+                        }
                     }
-                };
-
-
-            $.event.special.myclick = isMobile ? mobile : pc;
-
-            function touchstartHandler(e){
-                startTime = Date.now()
-                isMove = false
+                })
             }
-            function touchmoveHandler(e){
-                isMove = true
-            }
-            function touchendHandler(e){
-                if(!isMove && Date.now() - startTime < THROLD_HOLD ){
-                    $(this).trigger('myclick')
-                }
-            }
-        })(jQuery);
-    </script>
+        };
+    
+    if(isMobile) $.event.special.click = mobile;
+})(jQuery);
+</script>
 
     <script>
          const useragent = document.getElementById('useragent')
          const logBox = document.getElementById('logBox');
+         $(function(){
+            init();
+        })
 
          function init(){
             useragent.textContent = `useragent: ${navigator.userAgent}`;
+            document.querySelector('code').innerHTML = document.getElementById('jspecial').textContent
             document.getElementById('clear').addEventListener('click', function(){
                 logBox.innerHTML = '';
             })
 
-            $('#btn1').on('myclick', myclickHandler)
-            $('#btn1').trigger('myclick');
-            
-            $('#btn2').on('myclick', myclickHandler)
-            // $('#btn2').trigger('myclick');
-
-            $('#chk1').on('myclick', function(){
-                log(`chk1 checked: ${this.checked}`)
+            const addevent = document.querySelector('#addevent');
+            addevent.addEventListener('touchstart', e=>{
+                log(`addevent touchstart`)
             })
-
-            setTimeout(()=>{
-                $('#btn1').off('myclick')
-            }, 5000)
+            addevent.addEventListener('touchend', e=>{
+                log(`addevent touchend `)
+            })
+            addevent.addEventListener('click', e=>{
+                log(`addevent click`, 'gray')
+            })
             
-            function myclickHandler(){
-                log(`invoke ${this.name}'s handler`)
+            $('#btn2').on('click', clickHandler)
+            $('#btn2').on('dblclick', dblclickHandler)
+            btn2.addEventListener('click', function(){
+                log(`${this.name} native event handler is called`)
+            })
+            // $('#btn2').trigger('click');
+
+            $('#chk1').on('click', function(){
+                log(`${this.name} checked: ${this.checked}`, 'blue')
+            })
+            chk1.addEventListener('click', function(){
+                log(`${this.name} native event handler is called`)
+            })
+            
+            function clickHandler(e){
+                log(`invoke ${this.name}'s handler`, 'gray')
+                // log(`timestamp ${e.timeStamp}`, 'gray')
+            }
+            function dblclickHandler(e){
+                log(`invoke ${this.name}'s double click handler`, 'gray')
             }
          }
 
-         init()
-
-        function log(str){
-            str = Array.prototype.join.call(arguments, ' ')
+        function log(str, color){
             let p = document.createElement('p');
-            p.textContent =`${getCurrentTime()}  ${str}`;
+            p.textContent =`${getCurrentTime()}  ${str} `;
+            p.style.color = color || 'black';
             logBox.prepend(p);
         }
         function getCurrentTime(){

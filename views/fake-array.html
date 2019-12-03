@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Fake Array</title>
+    <script src="libs/jquery.js"></script>
+</head>
+
+<body>
+    <script>
+        function FA(len) {
+            len = +len || 0;
+            for (let i = 0; i < len; i++) {
+                this[i] = ''
+            }
+            this.length = len;
+        }
+        // FA.prototype.splice = Array.prototype.splice
+        FA.prototype[Symbol.iterator]=function(){}
+        window.fa = new FA(1)
+        console.log(fa)
+    </script>
+
+    <div id="isempty"></div>
+
+    <script>
+        const base=[0, 123, null, undefined, '', 'abc', true, false, Symbol('symbol'), (new Date), /test/, (function f(){}), [], [1,2], {}, {k:1}]
+
+        base.forEach(v=>{
+            console.log( v, '|',$.isEmptyObject(v), isEmptyObject(v))
+        })
+
+        function isEmptyObject(o){
+            let r = JSON.stringify(o);console.log(r);
+            return !o || /(?:\{\}|\[\])/.test(r) || !!o.toJSON
+            // return o === null || o === undefined || !Object.keys(o).length
+        }
+    </script>
+</body>
+
+</html>
