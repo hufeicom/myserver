@@ -60,7 +60,7 @@
                                 log(`click timeout`)
                             }else {
                                 lastClickTime = e.timeStamp;
-                                this.click()
+                                $.event.dispatch.call(this, $.Event(e, {type: 'click'}))
                             }
                         }
                     }
