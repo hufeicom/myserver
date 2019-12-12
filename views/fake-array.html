@@ -10,7 +10,13 @@
 </head>
 
 <body>
-    <script>
+    <pre>
+        <code>
+
+        </code>
+    </pre>
+    <script id="">
+        /* 伪数组 */
         function FA(len) {
             len = +len || 0;
             for (let i = 0; i < len; i++) {
@@ -18,26 +24,83 @@
             }
             this.length = len;
         }
-        // FA.prototype.splice = Array.prototype.splice
-        FA.prototype[Symbol.iterator]=function(){}
+        FA.prototype.splice = Array.prototype.splice;
         window.fa = new FA(1)
         console.log(fa)
-    </script>
 
-    <div id="isempty"></div>
-
-    <script>
-        const base=[0, 123, null, undefined, '', 'abc', true, false, Symbol('symbol'), (new Date), /test/, (function f(){}), [], [1,2], {}, {k:1}]
+        /* isEmptyObject */
+        /**
+         *  empty object的定义是什么
+         *  什么是object?
+         *  一组属性的集合，{a:1}, {a: {b:1} }......
+         *  空对象是不是可以理解为 {}
+         *  但是由于js的原型机制，
+         *  即使单独写一个对象字面量，也会存在一个指向Object的属性
+         */ 
+        /**
+         * 判断对象是否不为空的条件，是看是否具有可枚举的属性
+         * for ... in操作符会遍历对象自身所有可枚举的属性
+         * 获取对象所有可枚举属性的方法Object.keys, Object.values
+         * Object.entries 返回对象上所有可枚举属性的 [key, value]数组，也能判断对象是否为空
+         * Object.getOwnPropertyNames 返回对象自身的所有属性
+         */
+        // 方法一  Object.keys, Object.values, Object.entries, Object.getOwnPropertyNames
+        // function isEmptyObject(o){
+        //     return !o || !Object.keys(o).length
+        // }
+        // 方法二
+        var o = {a:1,c:2};
+        console.log(JSON.stringify(o))
+        // Object.defineProperty( Object.prototype, 'toJSON', {
+        //         enumerable:false,
+        //         value: function(k, v){return 11}
+        //     })
+        Object.defineProperty(o, 'b', {
+            enumerable:false,
+            value: 'vvvv0'
+        })
+        console.log(JSON.stringify(o))
+        function replacer(){
+            let i = 0;
+            return function(k, v){
+                console.log(arguments)
+                return i++;
+            }
+        }
+        
+        
+        function isEmptyObject(o) {
+            var i = 0;
+            
+            return !o || ['symbol', 'boolean', 'number'].indexOf( typeof o) > -1  ||  !/11/.test(JSON.stringify(o, replacer()));
+        }
+        function Obj(){}
+        Object.defineProperty(Obj.prototype, 'enum', {
+            enumerable: true,
+            value: 'enumed'
+        })
+        Object.defineProperty(Obj.prototype, 'notenum', {
+            enumerable: false,
+            value: 'not enumable'
+        })
+        var d1 = new Date(), d2 = new Date(), f1 = function(){}, f2=function(){}, obj = new Obj();
+        d2.foo = f2.foo = "test foo"
+        const base=[0, 123, null, undefined, '', 'abc', true, false, Symbol('symbol'), d1, d2, /test/, f1, f2, [], [1,2], {}, {k:1, v:2}, obj]
 
         base.forEach(v=>{
-            console.log( v, '|',$.isEmptyObject(v), isEmptyObject(v))
+            console.log( v, typeof v,  '|',$.isEmptyObject(v), isEmptyObject(v))
         })
 
-        function isEmptyObject(o){
-            let r = JSON.stringify(o);console.log(r);
-            return !o || /(?:\{\}|\[\])/.test(r) || !!o.toJSON
-            // return o === null || o === undefined || !Object.keys(o).length
-        }
+        // function isEmptyObject(o){
+        //     let r = JSON.stringify(o);console.log(r);
+        //     return !o || ['symbol', 'boolean', 'function', 'number'].indexOf( typeof o) > -1 
+        //             || /(?:\{\}|\[\])/.test(r) || !!o.toJSON || 123;
+        // }
+        
+    </script>
+
+    <script>
+        document.querySelector('code').innerHTML = document.body.querySelector('script').innerHTML
     </script>
 </body>
 

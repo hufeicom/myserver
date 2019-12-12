@@ -10,12 +10,14 @@
     <script src="/libs/myspecial.js"></script>
 
     <style>
-        body{
+        body {
             border: 2px dashed green;
         }
-        div{
+
+        div {
             border: 5px dashed yellow;
         }
+
         .l1 {
             background: gray;
             width: 600px;
@@ -42,37 +44,26 @@
             <div class="l3"></div>
         </div>
     </div>
+    <input type="checkbox" name="xxx" id="yyy">
     <div class="l3"> </div>
     <script>
         var $a = $('body'), $div = $('div')
-        $a.on('click', function(){
-            console.log( 'body click event handler')
-            $(this).css({
-                background: 'blue'
-            })
+
+        $div.one('click', clickHandler)
+        $a.on('click', '.l2', function () {
+            console.log('test delagate type')
+        })
+        $a.on('dblclick', function () { })
+        $a.on('mouseenter', function () { })
+        var $input = $('#yyy')
+
+        $input.on('click', function(){
+            console.log(1)
         })
 
-        $div.on('click', function (e) {
-            e.stopPropagation()
-            $(this).css({
-                background: 'blue'
-            })
-        })
-        $div.on('clickout', clickoutHandler)
-        // $a.on('clickout', clickoutHandler)
-        function clickoutHandler(e) {
-            e.stopPropagation()
-            $(this).css({
-                background: 'red'
-            })
-            console.log( 'clickout', e.type, this, e.target)
+        function clickHandler(e) {
+            console.log('once')
         }
-        $('.l2').trigger('clickout')
-
-        // $('div, body').off('clickout')
-
-
-
     </script>
 </body>
 

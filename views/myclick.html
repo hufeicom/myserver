@@ -32,6 +32,7 @@
     <p id="useragent"></p>
     <button id="addevent" name="addevent"> addEventListener</button>
     <button id="btn2" name="special click"> jquery special click</button>
+    <button id="btn3" name="delegateType click"> jquery special delegateType</button>
     <input type="checkbox" name="checkbox1" id="chk1" style="display: none;">
     
     <br>
@@ -45,28 +46,23 @@
     const tapDelay = 200, timeout = 500;
     const mobile = {
             setup:function(){
-                let targetElement,startTime=0,lastClickTime=0;
-                $(this).on('touchstart touchend', function(e){
-                    if(e.type === 'touchstart'){
-                        targetElement = e.target;
-                        startTime = e.timeStamp;
-                        log(`${this.name} touchstart `)
-                    } else {
-                        if(targetElement === e.target){
-                            log(`${this.name} touchend `)
-                            if(e.timeStamp - lastClickTime < tapDelay){
-                                log( `don't need trigger click`)
-                            } else if (e.timeStamp - startTime > timeout ) {
-                                log(`click timeout`)
-                            }else {
-                                lastClickTime = e.timeStamp;
-                                $.event.dispatch.call(this, $.Event(e, {type: 'click'}))
-                            }
-                        }
-                    }
-                })
+                $.event.add(this, 'touchstart touchend', handler)
+            },
+            teardown: function(params) {
+                $.event.remove(this, 'touchstart touchend', handler)
             }
         };
+
+    function handler(e) {
+        if (e.type === 'touchstart') {
+            $.data(this, 'targetElement', e.target);
+        } else {
+            if ($.data(this, 'targetElement') === e.target) {
+                $.data(this, 'targetElement', null);
+                $.event.dispatch.call(this, $.Event(e, { type: 'click' }));
+            }
+        }
+    }
     
     if(isMobile) $.event.special.click = mobile;
 })(jQuery);
@@ -97,12 +93,15 @@
                 log(`addevent click`, 'gray')
             })
             
-            $('#btn2').on('click', clickHandler)
+            $('#btn2').on('click.book', clickHandler)
+            $('#btn2').on('click.foo', function(params) {
+                log('click.foo')
+            })
             $('#btn2').on('dblclick', dblclickHandler)
             btn2.addEventListener('click', function(){
                 log(`${this.name} native event handler is called`)
             })
-            // $('#btn2').trigger('click');
+            $('body').on('click', '#btn3', clickHandler);
 
             $('#chk1').on('click', function(){
                 log(`${this.name} checked: ${this.checked}`, 'blue')
