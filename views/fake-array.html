@@ -19,13 +19,11 @@
         /* 伪数组 */
         function FA(len) {
             len = +len || 0;
-            for (let i = 0; i < len; i++) {
-                this[i] = ''
-            }
+            this[len-1]=undefined;
             this.length = len;
         }
-        FA.prototype.splice = Array.prototype.splice;
-        window.fa = new FA(1)
+        // FA.prototype.splice = Array.prototype.splice;
+        window.fa = new FA(13)
         console.log(fa)
 
         /* isEmptyObject */
@@ -48,32 +46,27 @@
         // function isEmptyObject(o){
         //     return !o || !Object.keys(o).length
         // }
-        // 方法二
-        var o = {a:1,c:2};
-        console.log(JSON.stringify(o))
-        // Object.defineProperty( Object.prototype, 'toJSON', {
-        //         enumerable:false,
-        //         value: function(k, v){return 11}
-        //     })
-        Object.defineProperty(o, 'b', {
-            enumerable:false,
-            value: 'vvvv0'
-        })
-        console.log(JSON.stringify(o))
-        function replacer(){
-            let i = 0;
-            return function(k, v){
-                console.log(arguments)
-                return i++;
+        // 方法二 
+        /*  无法处理的情况 1. new Date, 2. function f(){}, */
+        function isEmptyObject(o) {
+            if( o === null ) return true;
+            var type = typeof o;
+            switch(type){
+                case 'number':
+                case 'boolean':
+                case 'symbol':
+                case 'undefined':
+                    return true;
+                case 'string':
+                    return !o;
+                case 'function':
+                    return true;
+                case 'object':
+                    var str = JSON.stringify(o);
+                    return (str === '[]' || str === '{}') && isEmptyObject(Object.getPrototypeOf(o))
             }
         }
-        
-        
-        function isEmptyObject(o) {
-            var i = 0;
-            
-            return !o || ['symbol', 'boolean', 'number'].indexOf( typeof o) > -1  ||  !/11/.test(JSON.stringify(o, replacer()));
-        }
+
         function Obj(){}
         Object.defineProperty(Obj.prototype, 'enum', {
             enumerable: true,
@@ -83,20 +76,16 @@
             enumerable: false,
             value: 'not enumable'
         })
-        var d1 = new Date(), d2 = new Date(), f1 = function(){}, f2=function(){}, obj = new Obj();
-        d2.foo = f2.foo = "test foo"
-        const base=[0, 123, null, undefined, '', 'abc', true, false, Symbol('symbol'), d1, d2, /test/, f1, f2, [], [1,2], {}, {k:1, v:2}, obj]
+
+
+        /* 测试用例 */
+        var d1 = new Date(), d2 = new Date(), f1 = function(){}, f2=function(){}, obj = new Obj(), r1 = /reg/, r2 = /with-proto-foo/;
+        r2.foo = d2.foo = f2.foo = "test foo"
+        const base=[0, 123, null, undefined, '', 'abc', true, false, Symbol('symbol'), d1, d2, r1, r2, f1, f2, [], [1,2], {}, {k:1, v:2}, obj]
 
         base.forEach(v=>{
-            console.log( v, typeof v,  '|',$.isEmptyObject(v), isEmptyObject(v))
-        })
-
-        // function isEmptyObject(o){
-        //     let r = JSON.stringify(o);console.log(r);
-        //     return !o || ['symbol', 'boolean', 'function', 'number'].indexOf( typeof o) > -1 
-        //             || /(?:\{\}|\[\])/.test(r) || !!o.toJSON || 123;
-        // }
-        
+            console.log(v,$.isEmptyObject(v), isEmptyObject(v))
+        })        
     </script>
 
     <script>
