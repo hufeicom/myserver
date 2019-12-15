@@ -1,7 +1,7 @@
 const argv = process.argv.slice(2)
 
 const params = {
-    port: 80 // default port 80
+    port: 3000 // default port 80
 };
 argv.map( v=>{
     if(/^p\d+$/.test(v)){

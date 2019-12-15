@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>isEmptyObject</title>
+</head>
+<body>
+    <script src="/utils/benchmark.js"></script>
+    <script>
+        function O(type){ if(type) this[type] = type;}
+        O.prototype.name='oooo';
+        Object.defineProperty(O.prototype, 'boo', {
+            enumerable: false,
+            value: 'fooooo'
+        })
+        
+        function isEmptyObject1(o){
+            return !Reflect.ownKeys(o).length
+        }  
+        function isEmptyObject2(o){
+            return JSON.stringify(o) ==='{}'
+        }
+        function isEmptyObject(o){
+            let k;
+            for(k in o){
+                return false;
+            }
+            return true;
+        }
+        function isEmptyObject3(o){
+            return !Object.keys(o).length
+        }
+        function isEmptyObject4(o){
+            return !Object.getOwnPropertyNames(o).some(v=>!o.hasOwnProperty(v))
+        }
+        const fns = [isEmptyObject1, isEmptyObject2, isEmptyObject, isEmptyObject3, isEmptyObject4];
+        const params = [ new O, new O(1)]
+        params.forEach( o=>Reflect.apply(Test, null, fns.map(f=>{ return {'name': f.name, 'fn': f, 'params': [o]}})))
+        params.forEach(o=>fns.forEach(f=>console.log(f(o))))
+    </script>
+</body>
+</html>

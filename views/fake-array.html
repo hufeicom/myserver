@@ -48,25 +48,29 @@
         // }
         // 方法二 
         /*  无法处理的情况 1. new Date, 2. function f(){}, */
-        function isEmptyObject(o) {
-            if( o === null ) return true;
-            var type = typeof o;
-            switch(type){
-                case 'number':
-                case 'boolean':
-                case 'symbol':
-                case 'undefined':
-                    return true;
-                case 'string':
-                    return !o;
-                case 'function':
-                    return true;
-                case 'object':
-                    var str = JSON.stringify(o);
-                    return (str === '[]' || str === '{}') && isEmptyObject(Object.getPrototypeOf(o))
-            }
-        }
+        // function isEmptyObject(o) {
+        //     if( o === null ) return true;
+        //     var type = typeof o;
+        //     switch(type){
+        //         case 'number':
+        //         case 'boolean':
+        //         case 'symbol':
+        //         case 'undefined':
+        //             return true;
+        //         case 'string':
+        //             return !o;
+        //         case 'function':
+        //             return true;
+        //         case 'object':
+        //             var str = JSON.stringify(o);
+        //             return (str === '[]' || str === '{}') && isEmptyObject(Object.getPrototypeOf(o))
+        //     }
+        // }
 
+        // 方法三
+        function isEmptyObject(o){
+            return !o || !o.valueOf();
+        }
         function Obj(){}
         Object.defineProperty(Obj.prototype, 'enum', {
             enumerable: true,
