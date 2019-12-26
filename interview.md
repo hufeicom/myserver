@@ -28,6 +28,8 @@ JSON.stringify-> toJSON-> toString, valueof
 2. ['1', '2', '3'].map(parseInt)返回结果 
 [1, NaN, NaN ]
 
+2. `(!+[[]][0] + [] + ![]).length` 输出结果？
+
 3. Array.prototype.indexOf 与 Array.includes有什么区别？
 ```js
 const arr = [NaN, +0, -0,,];

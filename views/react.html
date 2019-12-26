@@ -43,9 +43,30 @@
 				);
 			}
 		}
+		class AddTodo extends React.Component {
+			render() {
+				return ( <div onClick={this.sayHi}> f</div>)
+			}
+			sayHi(){
+				console.log('Hi~')
+			}
+		}
+		class TODO extends React.Component {
+			constructor(props) {
+				super(props)
+				this.state = {
+					todos: []
+				}
+			}
+			render() {
+				return e(
+					AddTodo
+				)
+			}
+		}
 
 		const domContainer = document.querySelector('#like_button_container');
-		ReactDOM.render(e(LikeButton), domContainer);
+		ReactDOM.render(e(TODO), domContainer);
 	</script>
 
 </body>
