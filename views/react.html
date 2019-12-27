@@ -28,21 +28,30 @@
 		function Welcome(props) {
 			return <h1>Hello, {props.name}</h1>;
 		}
-
-		function App() {
-			return (
-				<div>
-					<Welcome name="Sara" />
-					<Welcome name="Cahal" />
-					<Welcome name="Edite" />
-				</div>
-			);
+		class AddTodo extends React.Component {
+			render() {
+				return ( <div onClick={this.sayHi}> f</div>)
+			}
+			sayHi(){
+				console.log('Hi~')
+			}
+		}
+		class TODO extends React.Component {
+			constructor(props) {
+				super(props)
+				this.state = {
+					todos: []
+				}
+			}
+			render() {
+				return e(
+					AddTodo
+				)
+			}
 		}
 
-		ReactDOM.render(
-			<App />,
-			document.getElementById('root')
-		);
+		const domContainer = document.querySelector('#like_button_container');
+		ReactDOM.render(e(TODO), domContainer);
 	</script>
 
 </body>
