@@ -5,6 +5,10 @@
 
 
 ## CSS
+1. 什么情况下，用translate()而不用绝对定位？什么时候，情况相反。
+> translate()是transform的一个值。改变transform或opacity不会触发浏览器重新布局（reflow）或重绘（repaint），只会触发复合（compositions）。而改变绝对定位会触发重新布局，进而触发重绘和复合。transform使浏览器为元素创建一个 GPU 图层，但改变绝对定位会使用到 CPU。 因此translate()更高效，可以缩短平滑动画的绘制时间。
+>
+>当使用translate()时，元素仍然占据其原始空间（有点像position：relative），这与改变绝对定位不同。
 
 
 ## JS

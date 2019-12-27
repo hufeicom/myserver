@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <script src="/utils/benchmark.js"></script>
+
+    <script>
+
+        function fibonacci1(n) {
+            if (n <= 1)
+                return n;
+            else
+                return fibonacci1(n - 1) + fibonacci1(n - 2);
+        }
+
+        function fibonacci2(n) {
+            var fibo = [0, 1];
+
+            if (n <= 2) return 1;
+
+            for (var i = 2; i <= n; i++) {
+                fibo[i] = fibo[i - 1] + fibo[i - 2];
+            }
+
+            return fibo[n];
+        }
+
+        const fns = [fibonacci1, fibonacci2]
+        Reflect.apply(Test, null, fns.map(f => { return { "name": f.name, 'fn': f, 'params': [20] } }));
+
+    </script>
+</body>
+
+</html>

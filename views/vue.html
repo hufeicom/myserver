@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>vue.js</title>
+    <script src="/libs/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <mantou>book</mantou>
+        <newbaozi></newbaozi>
+    </div>
+    <script>
+        const mixin = {
+            beforeCreate() {
+                console.log('huomian')
+            }
+        }
+
+        Vue.component("Mantou", {
+            mixins: [mixin],
+            template: "<div><h2>Mantou </h2><slot></slot></div>"
+        })
+
+        const Baozi = Vue.component('Baozi', {
+            props: {
+                name: String
+            },
+            template: "<div><h2 @click='log'> {{name}} </h2></div>",
+            methods:{
+                log(){
+                    console.log(Date.now(), this.name)
+                }
+            }
+        })
+
+        function HighOrderComp(comp) {
+            return {
+                data() {
+                    return {
+                        name: "a new Baozi"
+                    }
+                },
+                beforeCreate() {
+                    console.log("It is huomianing")
+                },
+                render(h) {
+                    console.log(this.name)
+                    return h(comp, { props: { name: this.name } })
+                }
+            }
+        }
+        new Vue({
+            el: '#app',
+            components: {
+                'newbaozi': HighOrderComp(Baozi)
+            }
+        })
+    </script>
+</body>
+
+</html>
