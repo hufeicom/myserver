@@ -1,103 +1,83 @@
-import React, { Component, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
+// import Todo from "./todo"
 
-
-class AddTodo extends Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			newItem: ''
-		}
-	}
-	updateInput = e => {
-		this.setState({ newItem: e.target.value })
-	}
-	addTodo = () => {
-		if (this.state.newItem) {
-			this.props.transferValue(this.state.newItem)
-			this.setState({
-				newItem: ""
-			})
-		}
-	}
-	render() {
-		return (
-			<div> <input value={this.state.newItem} onChange={this.updateInput}></input>
-				<button onClick={this.addTodo}>add</button>
-			</div>
-		)
-	}
+function AddTodo(props, ref) {
+	const [newItem, setItem] = useState('')
+	const { addItem } = props;
+	return <div> <input value={newItem} onChange={e=>{ setItem(e.target.value) }}></input>
+		<button onClick={()=>addItem(newItem)}>add</button>
+	</div>
 }
 
-function DoneStyle(WrappedComponent) {
+function DoneStyle() {
 	const gray = {
 		color: 'gray'
 	}
-	return class extends Component {
-		render() {
-			return <div style={gray}> <WrappedComponent  {...this.props} /> </div>;
-		}
+	return function (props) {
+		const {todo} = props;
+		return <div style={gray}> <Todo todo={todo}></Todo> </div>;
 	}
 }
-
-// class Todo extends Component {
-// 	render = () => {
-// 		const todo = this.props.todo;
-// 		const [complete, setDone] = useState(todo.done)
-// 		return (<li > <input type="checkbox" onChange={setDone} checked={complete ? "checked" :''}></input>{todo.name}</li>)
-// 	}
-// 	complete = () => {
-// 		this.props.complete(this.props.todo.id)
-// 	}
-// }
-function Todo(todo) {
-		const [complete, setDone] = useState(todo.done)
-		return (<li > <input type="checkbox" onChange={setDone} checked={complete ? "checked" :''}></input>{todo.name}</li>)
+function Todo(props) {
+	const index = props.index;
+	const { name, id, done } = props.todo;
+	const pSetDone = props.setDone;
+	const [ complete, setDone ] = useState(done);
+	console.log(id, done, complete)
+	return (<li key={id}> <input type="checkbox" checked={complete ? 'checked':''} onChange={(e)=>{
+		// console.log( e.target.value === 'on');
+		// setDone( !complete );
+		pSetDone( id, !complete)
+	}}></input>{name}</li>)
 
 }
 
 const Done = DoneStyle(Todo);
 
-class App extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			todos: []
-		};
-	}
-	childValue = data => {
-		this.setState({
-			todos: this.state.todos.concat({
-				id: Date.now(),
-				name: data,
-				done: false
-			})
-		})
-	}
-	complete = (id) => {
-		this.setState({
-			todos: this.state.todos.map(v => {
-				if (v.id === id) {
-					v.done = !v.done;
-				}
-				return v;
-			})
-		})
+function App() {
+	const [todos, setTodos] = useState([{
+		id: Date.now()
+		,name: "hhaha"
+		, done: true
+	}]);
+	console.log(todos);
+	// const pchildref = useRef();
+	function childValue(data) {
+		const newTodos = todos.concat([{
+			id: Date.now(),
+			name: data,
+			done: false
+		}]);
+		console.log(newTodos)
+		setTodos(newTodos)
 	}
 
-	render() {
-		const todos = this.state.todos.map((v, i) => {
-			if (v.done) return <Done key={i} todo={v} complete={this.complete} ></Done>
-			return Todo(v)
-		})
-		const done = this.state.todos.filter(v => v.done)
-		return (
-			<div className="App"> <AddTodo transferValue={this.childValue}></AddTodo>
-				<p> done: {done.length}</p>
-				<ul>{todos}</ul>
-			</div>
-		)
+	function setDone(id, done){
+		const newtodo = todos.map( v=>{
+			console.log(id, v.id, done)
+			if( v.id == id) v.done = done;
+			console.log(v)
+			return v;
+		});
+		
+		setTodos(todos)
 	}
+	// useEffect()
+	return (
+		<div className="App"> <AddTodo addItem={(data)=>{ 
+			childValue(data)
+		}}></AddTodo>
+			<p> done: {todos.filter(v => v.done).length}</p>
+			<ul> {console.log(Date.now()),todos.map((v, i) => {
+				if (v.done) return <Done key={i} todo={v}></Done>
+				return <Todo key={i} index={i} todo={v} setDone={(id,done)=>{
+					setDone(id, done)
+				}}></Todo>
+			})}</ul>
+		</div>
+	)
+
 
 }
 
