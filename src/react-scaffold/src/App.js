@@ -1,84 +1,78 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './App.css';
-// import Todo from "./todo"
+import React, { useState, useEffect } from 'react'
+import './App.css'
 
-function AddTodo(props, ref) {
-	const [newItem, setItem] = useState('')
-	const { addItem } = props;
-	return <div> <input value={newItem} onChange={e=>{ setItem(e.target.value) }}></input>
-		<button onClick={()=>addItem(newItem)}>add</button>
+const MAX = 3;
+function Huomian(props) {
+	let [time, updateTime] = useState(0);
+	let max = props.max;
+	useEffect(() => {
+		let id = setInterval(() => {
+			time++;
+			if (time <= max) updateTime(time++);
+			else {
+				props.onDone()
+			}
+		}, 800);
+		return () => clearInterval(id);
+	})
+	return <p>{time} seconds gone~~ ( after {max} seconds)</p>
+}
+function Mantou() {
+	let [done, updateDone] = useState(false)
+	return <div> {done ? <p>  蒸馒头</p> : <Huomian max={MAX} onDone={() => { updateDone(!done) }}></Huomian>}</div>
+}
+function Baozi(){
+	let [done, updateDone] = useState(false)
+	return <div>
+		{done ? <p>蒸包子</p> : <Huomian max={MAX+3} onDone={ ()=>{updateDone(!done)}}></Huomian>}
 	</div>
 }
 
-function DoneStyle() {
-	const gray = {
+
+function Todos() {
+	let [todos, updateTodos] = useState([
+		{
+			name: 'foo',
+			id: Date.now(),
+			done: false
+		}
+	])
+	let [newItem, updateNewItem] = useState('')
+	function handleKeyUp(e){
+		if(e.keyCode === 13 && e.target.value){
+			const [...newTodos] = todos;
+			newTodos.push({
+				name: newItem,
+				id: Date.now(),
+				done:false
+			})
+			updateNewItem('')
+			updateTodos(newTodos)
+		}
+	}
+
+	function toggleDone(id) {
+		const [...newTodos] = todos;
+
+		newTodos.forEach(v => {
+			if (v.id === id) {
+				v.done = !v.done;
+			}
+		})
+		updateTodos(newTodos)
+	}
+
+	const doneStyle={
 		color: 'gray'
 	}
-	return function (props) {
-		const {todo} = props;
-		return <div style={gray}> <Todo todo={todo}></Todo> </div>;
-	}
-}
-function Todo(props) {
-	const index = props.index;
-	const { name, id, done } = props.todo;
-	const pSetDone = props.setDone;
-	const [ complete, setDone ] = useState(done);
-	console.log(id, done, complete)
-	return (<li key={id}> <input type="checkbox" checked={complete ? 'checked':''} onChange={(e)=>{
-		// console.log( e.target.value === 'on');
-		// setDone( !complete );
-		pSetDone( id, !complete)
-	}}></input>{name}</li>)
 
+	return <div> 
+			<input type="text" value={newItem} onChange={ e=>updateNewItem(e.target.value) } onKeyUp={ handleKeyUp }></input>
+		<p> count: {(todos.filter(v => v.done)).length} </p><ul> {todos.map((v, i) => <li key={i} style={v.done ? doneStyle : {}}>
+		<input type="checkbox" onChange={() => { toggleDone(v.id) }} checked={v.done} />  {v.name}</li>)}</ul>
+	</div>
 }
 
-const Done = DoneStyle(Todo);
+export default Todos;
 
-function App() {
-	const [todos, setTodos] = useState([{
-		id: Date.now()
-		,name: "hhaha"
-		, done: true
-	}]);
-	console.log(todos);
-	// const pchildref = useRef();
-	function childValue(data) {
-		const newTodos = todos.concat([{
-			id: Date.now(),
-			name: data,
-			done: false
-		}]);
-		console.log(newTodos)
-		setTodos(newTodos)
-	}
-
-	function setDone(id, done){
-		const newtodo = todos.map( v=>{
-			console.log(id, v.id, done)
-			if( v.id == id) v.done = done;
-			console.log(v)
-			return v;
-		});
-		
-		setTodos(todos)
-	}
-	// useEffect()
-	return (
-		<div className="App"> <AddTodo addItem={(data)=>{ 
-			childValue(data)
-		}}></AddTodo>
-			<p> done: {todos.filter(v => v.done).length}</p>
-			<ul> {console.log(Date.now()),todos.map((v, i) => {
-				if (v.done) return <Done key={i} todo={v}></Done>
-				return <Todo key={i} index={i} todo={v} setDone={(id,done)=>{
-					setDone(id, done)
-				}}></Todo>
-			})}</ul>
-		</div>
-	)
-
-
-}
-
-export default App;
+export { Mantou, Baozi}
