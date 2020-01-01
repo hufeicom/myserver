@@ -11,8 +11,17 @@
 
 <body>
     <div id="app">
-        <mantou>book</mantou>
+        <mantou>{{book}}</mantou>
         <newbaozi></newbaozi>
+    </div>
+    <div> 
+        <h2>参照： <span id="t"></span></h2>
+        <script>
+            let t = document.getElementById('t');
+            setInterval(()=>{
+                t.textContent = new Date
+            }, 200)
+        </script>
     </div>
     <script>
         const mixin = {
@@ -56,6 +65,16 @@
         }
         new Vue({
             el: '#app',
+            data(){
+                return {
+                    book: new Date
+                }
+            },
+            mounted(){
+                setInterval(()=>{
+                    this.book = new Date;
+                }, 300)
+            },
             components: {
                 'newbaozi': HighOrderComp(Baozi)
             }
