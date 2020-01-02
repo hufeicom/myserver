@@ -1,7 +1,7 @@
 ## html
 
 
-请解释 <script>、<script async> 和 <script defer> 的区别
+请解释 `<script>`、`<script async>` 和 `<script defer>` 的区别
 
 
 ## CSS
@@ -12,7 +12,7 @@
 
 
 ## JS
-1. 输出结果
+### 1. 输出结果
 ```js
 var a = 1;
 function b() {
@@ -24,17 +24,19 @@ function b() {
 b();
 alert(a);
 ```
-1. 判断一个对象是否为空（{}） 的方法有哪些?
+### 1. 判断一个对象是否为空（{}） 的方法有哪些?
 for...in, Object.keys, Object.values, Object.entries, Object.getOwnPropertyNames, 
 JSON.stringify-> toJSON-> toString, valueof
 
+### 2. Proxy可以实现什么功能？ 能否简单写一下。 与Reflect有什么区别？
+响应式，
 
-2. ['1', '2', '3'].map(parseInt)返回结果 
+### 2. ['1', '2', '3'].map(parseInt)返回结果 
 [1, NaN, NaN ]
 
-2. `(!+[[]][0] + [] + ![]).length` 输出结果？
+### 2. `(!+[[]][0] + [] + ![]).length` 输出结果？
 
-3. Array.prototype.indexOf 与 Array.includes有什么区别？
+### 3. Array.prototype.indexOf 与 Array.includes有什么区别？
 ```js
 const arr = [NaN, +0, -0,,];
 arr.indexOf(NaN); // -1
@@ -46,7 +48,7 @@ arr.includes(NaN); // true
 arr.includes(undefined); // true
 ```
 
-将数组const arr = [ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10] 扁平化/去重/排序，性能如何？
+### 将数组const arr = [ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10] 扁平化/去重/排序，性能如何？
 ```js
 const arr = [[1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14]]]], 10];
 function one(s) {
@@ -66,7 +68,34 @@ function three(s) {
     return unique(s.toString().split(",")).sort((a, b) => a - b).map(Number)
 };
 ```
-async/await 与 promise有什么不同？ 自己实现async/await 或 promise的polyfill
+### 3. 说说promise有什么不完美的地方？ 对应的解决方案？
+多层then的问题，无法中止，无法捕捉异常
+generator
+async/await
+
+```js
+functions async(generator){
+    let iterator = generator();
+
+    function handle(iteratorResult){
+        if(iteratorResult.done) return ;
+        
+        const iteratorValue = iteratorResulte.value;
+
+        if(iteratorValue instanceof Promise){
+            iteratorValue.then(res => handle(iterator.next(res))).catch( err=>iterator.throw(err));
+        }
+    }
+
+    try {
+        handle( iterator.next());
+    } catch(e){
+        iterator.throw(e)
+    }
+}
+```
+
+
 
 
 ## web
