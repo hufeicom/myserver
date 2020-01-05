@@ -4,7 +4,10 @@ import './index.css';
 import App, {Mantou, Baozi} from './App';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<div><App></App><Mantou></Mantou><Baozi></Baozi></div>, document.getElementById('root'));
+import Parent from './render-prop'
+import Hoc from './hoc'
+
+ReactDOM.render(<div><App></App><Parent></Parent> <Hoc></Hoc><Mantou></Mantou><Baozi></Baozi></div>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
