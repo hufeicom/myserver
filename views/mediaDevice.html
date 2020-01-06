@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>html5直接调用手机相机照相/录像</title>
+</head>
+
+<body>
+    <div>
+        <h3>使用设备的面向用户的相机拍摄照片</h3>
+        <form>
+            <input type="file" name="image" accept="image/*" capture="user" id="photo"><br>
+            <canvas id="canvas"></canvas>
+        </form>
+    </div>
+    <div>
+        <h3>使用面向环境的设备本地摄像机捕获视频：</h3>
+        <form>
+            <input type="file" name="video" accept="video/*" capture="environment">
+        </form>
+    </div>
+
+    <script>
+
+        const MAX = document.body.clientWidth;
+        let ctx = canvas.getContext('2d');
+        photo.addEventListener('change', function (e) {
+            let file = photo.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    let dataURL = e.target.result;
+                    let img = new Image();
+                    img.onload = function () {
+                        canvas.width = img.width > MAX ? MAX : img.width;
+                        canvas.height = img.width > MAX ? img.height * MAX / img.width : img.height;
+
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    }
+                    img.src = dataURL;
+
+                }
+                reader.readAsDataURL(file);
+            }
+        })
+    </script>
+</body>
+
+
+</html>
