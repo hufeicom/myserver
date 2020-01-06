@@ -35,8 +35,13 @@
         function isEmptyObject4(o){
             return !Object.getOwnPropertyNames(o).some(v=>!o.hasOwnProperty(v))
         }
-        const fns = [isEmptyObject1, isEmptyObject2, isEmptyObject, isEmptyObject3, isEmptyObject4];
-        const params = [ new O, new O(1)]
+
+        // 特例 针对数组的判断
+        function isEmptyObject5(o){
+            return !o.length;
+        }
+        const fns = [isEmptyObject1, isEmptyObject2, isEmptyObject, isEmptyObject3, isEmptyObject4, isEmptyObject5];
+        const params = [{length: 0}, [1]]
         params.forEach( o=>Reflect.apply(Test, null, fns.map(f=>{ return {'name': f.name, 'fn': f, 'params': [o]}})))
         params.forEach(o=>fns.forEach(f=>console.log(f(o))))
     </script>
