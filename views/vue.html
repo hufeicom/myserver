@@ -14,11 +14,11 @@
         <mantou>{{book}}</mantou>
         <newbaozi></newbaozi>
     </div>
-    <div> 
+    <div>
         <h2>参照： <span id="t"></span></h2>
         <script>
             let t = document.getElementById('t');
-            setInterval(()=>{
+            setInterval(() => {
                 t.textContent = new Date
             }, 200)
         </script>
@@ -29,10 +29,25 @@
                 console.log('huomian')
             }
         }
-
+        const m1 = {
+            data() {
+                return {
+                    x: 1
+                }
+            }
+        }
+        const m2 = {
+            data() {
+                return {
+                    x: 2,
+                    y: 1
+                }
+            }
+        }
+        
         Vue.component("Mantou", {
-            mixins: [mixin],
-            template: "<div><h2>Mantou </h2><slot></slot></div>"
+            mixins: [mixin, m1, m2],
+            template: "<div><h2>Mantou x: {{x}}, y: {{y}}</h2><slot></slot></div>"
         })
 
         const Baozi = Vue.component('Baozi', {
@@ -40,8 +55,8 @@
                 name: String
             },
             template: "<div><h2 @click='log'> {{name}} </h2></div>",
-            methods:{
-                log(){
+            methods: {
+                log() {
                     console.log(Date.now(), this.name)
                 }
             }
@@ -63,19 +78,24 @@
                 }
             }
         }
+
+
+        
+
         new Vue({
             el: '#app',
-            data(){
+            data() {
                 return {
                     book: new Date
                 }
             },
-            mounted(){
-                setInterval(()=>{
+            mounted() {
+                setInterval(() => {
                     this.book = new Date;
                 }, 300)
             },
             components: {
+                parent,
                 'newbaozi': HighOrderComp(Baozi)
             }
         })

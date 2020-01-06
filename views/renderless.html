@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>renderless component</title>
+    <script src="/libs/vue.js"></script>
+
+</head>
+
+<body>
+    <div id="app">
+        <parent></parent>
+
+        <toggle v-slot:boo="{on, toggle}">
+            <div class="container">
+                <button @click="click(toggle)">
+                    {{on ? 'On' : 'Off'}}
+                </button>
+            </div>
+        </toggle>
+
+        <toggle v-slot:boo="{on, toggle}">
+            <div class="container">
+                <button @click="click(toggle)" :style="{background: on ? 'green' : 'red'}">
+                    {{on ? 'On' : 'Off'}}
+                </button>
+            </div>
+        </toggle>
+        <timer v-slot:boo={i}> start from 100：{{i+100}}</timer><br>
+        <timer v-slot:boo={i}> start from &nbsp;&nbsp;&nbsp;0：{{i}}</timer>
+    </div>
+
+    <script>
+        const child = Vue.component('Son', {
+            template: `<div> This is child content <slot></slot></div>`
+        })
+
+        const parent = Vue.component('Parent', {
+            components: {
+                child
+            },
+            template: `<div> <child>This concent from parent</child></div>`
+        })
+        const toggle = {
+            render() {
+                return this.$scopedSlots.boo({
+                    on: this.state,
+                    toggle: this.toggle,
+                })
+            },
+            data() {
+                return { state: true }
+            },
+            methods: {
+                toggle() {
+                    this.state = !this.state;
+                }
+            }
+        }
+
+
+        const timer = {
+            render() {
+                return this.$scopedSlots.boo({
+                    i: this.i
+                });
+            },
+            data() {
+                return {
+                    i: 0
+                }
+            },
+            mounted() {
+                this.timer = setInterval(() => {
+                    this.i++
+                }, 1000)
+            }
+        }
+
+
+        new Vue({
+            el: '#app',
+            components: {
+                parent,
+                toggle,
+                timer
+            },
+            methods: {
+                click(fn) {
+                    fn()
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
