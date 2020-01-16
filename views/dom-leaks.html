@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DOM leaks</title>
+</head>
+
+<body>
+    <p id="p"></p>
+    <button onclick="start()">start</button>
+    <script>
+        var ____test____ = { "p" : 1 }
+        // start()
+        function start() {
+            var p = document.getElementById("p");
+            detached = document.createElement("div");
+            p.appendChild(detached);
+            p.removeChild(detached);
+            fill();
+        }
+
+        function fill() {
+            for (var i = 0; i < 25; ++i) {
+                var div = document.createElement('div');
+                div.data = new Array(10000);
+                for (var j = 0, l = div.data.length; j < l; ++j)
+                    div.data[j] = j.toString();
+                detached.appendChild(div);
+            }
+        }    
+    </script>
+
+</body>
+
+</html>

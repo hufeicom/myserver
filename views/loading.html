@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>loading</title>
+    <link rel="stylesheet" href="css/loading.css">
+    <style>
+.ico-loading {
+		display: inline-block;
+		width: 70px;
+		height: 70px;
+		background-repeat: no-repeat;
+        background-size: cover;
+        background-image: url("/imgs/loading/loding1@1x.png");
+		animation: loading 0.6s infinite;
+		// -webkit-animation: loading .2s infinite; /* Safari 和 Chrome */
+	}
+
+	@keyframes loading {
+		0% {
+			background-image: url("/imgs/loading/loding1@1x.png");
+		}
+		12.5% {
+			background-image: url("/imgs/loading/loding2@1x.png");
+		}
+		25% {
+			background-image: url("/imgs/loading/loding3@1x.png");
+		}
+		37.5% {
+			background-image: url("/imgs/loading/loding4@1x.png");
+		}
+		50% {
+			background-image: url("/imgs/loading/loding5@1x.png");
+		}
+		62.5% {
+			background-image: url("/imgs/loading/loding6@1x.png");
+		}
+		75% {
+			background-image: url("/imgs/loading/loding7@1x.png");
+		}
+		87.5% {
+			background-image: url("/imgs/loading/loding8@1x.png");
+		}
+    }
+    
+    .loading2{
+        display: inline-block;
+		width: 70px;
+		height: 70px;
+		background-repeat: no-repeat;
+        background-size: cover;
+        background-image: url("/imgs/loading/loding1@1x.png");
+        animation: loading2 1s infinite;
+		-webkit-animation: loading2 1s infinite; /* Safari 和 Chrome */
+    }
+    @keyframes loading2 {
+		12.5% {
+			transform: rotate(40deg);
+		}
+		25% {
+			transform: rotate(80deg);
+		}
+		37.5% {
+			transform: rotate(120deg);
+		}
+		50% {
+			transform: rotate(160deg);
+		}
+		62.5% {
+			transform: rotate(200deg);
+		}
+		62.5% {
+			transform: rotate(240deg);
+		}
+		75% {
+			transform: rotate(280deg);
+		}
+		87.5% {
+			transform: rotate(320deg);
+        }
+        100%{
+            transform: rotate(360deg);
+        }
+    }
+    </style>
+</head>
+<body>
+    <i class="ico-loading"></i> <i class="loading2"></i>
+</body>
+</html>
